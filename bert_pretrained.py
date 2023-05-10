@@ -5,6 +5,8 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import argparse
+import pickle
+from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 os.environ["WANDB_DISABLED"] = "True"
 
 palette = ['#264653', '#2a9d8f', '#e9c46a', '#f4a261', '#e76f51']
@@ -18,8 +20,28 @@ plt.rc('text', usetex=True)
 plt.rc('font', **font)
 plt.rc('text.latex', preamble=r'\usepackage{bm}')
 
+
+def compute_metrics(pred):
+    labels = pred.label_ids
+    preds = pred.predictions.argmax(-1)
+    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='binary')
+    acc = accuracy_score(labels, preds)
+    return {
+        'accuracy': acc,
+        'f1': f1,
+        'precision': precision,
+        'recall': recall
+    }
+
+
 def preprocess_function(dataset):
     return tokenizer([" ".join(x) for x in dataset["sentence"]])
+
+
+def store_file(losses, dataset):
+    file_name = "./results/{}_pretrainedbert".format(dataset)
+    with open(file_name, "wb") as f:
+        pickle.dump(losses, f)
 
 
 def plot_masking_losses(losses, probs):
@@ -75,10 +97,14 @@ def get_masked_losses(model, dataset):
     return losses, probs
 
 
-lm_dataset = load_dataset("glue", "cola")
-tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+datasets = ["cola"]
 
-model = BertForMaskedLM.from_pretrained("bert-base-uncased")
-losses, probs = get_masked_losses(model, lm_dataset)
-plot_masking_losses(losses, probs)
+for dataset in datasets:
+    lm_dataset = load_dataset("glue", dataset)
+    tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
+    tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+
+    model = BertForMaskedLM.from_pretrained("bert-base-uncased")
+    losses, probs = get_masked_losses(model, lm_dataset)
+    store_file(losses, dataset)
+    plot_masking_losses(losses, probs)
