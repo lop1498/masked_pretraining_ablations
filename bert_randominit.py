@@ -5,6 +5,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import argparse
+import time
 import pickle
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 os.environ["WANDB_DISABLED"] = "True"
@@ -39,7 +40,7 @@ def compute_metrics(pred):
 
 
 def store_file(losses, dataset):
-    file_name = "./results/{}_pretrainedbert".format(dataset)
+    file_name = "./results/{}_randombert".format(dataset)
     with open(file_name, "wb") as f:
         pickle.dump(losses, f)
 
@@ -88,7 +89,7 @@ def get_masked_losses(model, dataset):
             train_dataset=lm_dataset_train,
             eval_dataset=lm_dataset_test,
             data_collator=data_collator,
-            compute_metrics=compute_metrics
+            # compute_metrics=compute_metrics
         )
         eval_results = trainer.evaluate()
         print(eval_results)
@@ -98,9 +99,10 @@ def get_masked_losses(model, dataset):
     return losses, probs
 
 
-datasets = ["cola"]
+datasets = ["cola","mnli","mnli_matched","mnli_mismatched","mrpc","qnli","qqp","rte","sst2","stsb"]
 
 for dataset in datasets:
+    start_time = time.time() # start tracking time
     lm_dataset = load_dataset("glue", dataset)
     tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
     tokenizer.add_special_tokens({'pad_token': '[PAD]'})
@@ -110,3 +112,9 @@ for dataset in datasets:
     losses, probs = get_masked_losses(model, lm_dataset)
     store_file(losses, dataset)
     plot_masking_losses(losses, probs)
+
+    end_time = time.time() # end tracking time
+    elapsed_time = end_time - start_time # calculate elapsed time   
+    m, s = divmod(elapsed_time, 60)
+    h, m = divmod(m, 60)
+    print(f"Time taken to compute {dataset}: {int(h)} hours {int(m)} minutes {int(s)} seconds")

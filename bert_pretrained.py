@@ -6,6 +6,7 @@ import os
 import matplotlib.pyplot as plt
 import argparse
 import pickle
+import time
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 os.environ["WANDB_DISABLED"] = "True"
 
@@ -80,7 +81,7 @@ def get_masked_losses(model, dataset):
         weight_decay=0.01,
     )
 
-    for prob in np.arange(0.05,1,0.05):
+    for prob in np.arange(0,1,0.01):
         data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm_probability=prob)
         trainer = Trainer(
             model=model,
@@ -97,9 +98,10 @@ def get_masked_losses(model, dataset):
     return losses, probs
 
 
-datasets = ["cola"]
+datasets = ["cola","mnli","mnli_matched","mnli_mismatched","mrpc","qnli","qqp","rte","sst2","stsb"]
 
 for dataset in datasets:
+    start_time = time.time()
     lm_dataset = load_dataset("glue", dataset)
     tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
     tokenizer.add_special_tokens({'pad_token': '[PAD]'})
@@ -108,3 +110,7 @@ for dataset in datasets:
     losses, probs = get_masked_losses(model, lm_dataset)
     store_file(losses, dataset)
     plot_masking_losses(losses, probs)
+
+    end_time = time.time() # end tracking time
+    elapsed_time = end_time - start_time # calculate elapsed time
+    print(f"Time taken to compute {dataset}: {elapsed_time:.2f} seconds")
