@@ -19,13 +19,13 @@ def load_file(file_name):
         return pickle.load(f)
 
 
-datasets = ["cola"]
+datasets = ["ax"]
 for dataset in datasets:
     file_name_pretrained = "./results/{}_pretrainedbert".format(dataset)
     file_name_random = "./results/{}_randombert".format(dataset)
     loss_pretrained = load_file(file_name_pretrained)
     loss_random = load_file(file_name_random)
-    probs = np.arange(0.05,1,0.3)
+    probs = np.arange(0,1,0.01)
     plt.plot(probs, loss_pretrained, label='Pretrained BERT')
     plt.plot(probs, loss_random, label='Random BERT')
 
@@ -33,7 +33,7 @@ plt.xlabel('Masking percentage')
 plt.ylabel('Test loss')
 plt.legend()
 
-dataset_name = "CoLA"
+dataset_name = "ax"
 bbox_props = dict(boxstyle="square,pad=0.3", fc="white", ec="gray", lw=0.5)
 plt.text(0.05, 0.88, dataset_name, transform=plt.gca().transAxes, fontsize=12,
          verticalalignment='top', bbox=bbox_props)
