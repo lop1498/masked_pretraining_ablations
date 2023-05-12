@@ -10,10 +10,14 @@ tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 
 
 def preprocess_function(dataset):
-    return tokenizer([" ".join(x) for x in dataset["sentence"]])
+    l1 = [" ".join(x) for x in dataset["question"]]
+    l2 = [" ".join(x) for x in dataset["sentence"]]
+    l = l1 + l2
+
+    return tokenizer(l)
 
 
-def losses_cola(model, dataset):
+def losses_qnli(model, dataset):
     losses = []
     probs = []
     train_dataset = dataset['train']
