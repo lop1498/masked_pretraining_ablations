@@ -60,7 +60,7 @@ def get_masked_losses(model, lm_dataset, dataset):
         return losses_qnli(model, lm_dataset)
 
 
-datasets = ["qnli"]
+datasets = ["ax"]
 # TODO: "ax","mnli","mnli_matched","mnli_mismatched","mrpc","qnli","qqp"
 
 
