@@ -9,6 +9,7 @@ import pickle
 import time
 from data.cola import losses_cola
 from data.ax import losses_ax
+from data.mrpc import losses_mrpc
 from data.qnli import losses_qnli
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support
 os.environ["WANDB_DISABLED"] = "True"
@@ -58,9 +59,11 @@ def get_masked_losses(model, lm_dataset, dataset):
         return losses_ax(model, lm_dataset)
     elif dataset == "qnli":
         return losses_qnli(model, lm_dataset)
+    elif dataset == "mrpc":
+        return losses_mrpc(model, lm_dataset)
 
 
-datasets = ["ax"]
+datasets = ["mrpc"]
 # TODO: "ax","mnli","mnli_matched","mnli_mismatched","mrpc","qnli","qqp"
 
 
