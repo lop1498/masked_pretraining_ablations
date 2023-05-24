@@ -10,8 +10,8 @@ tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 
 
 def preprocess_function(dataset):
-    l1 = [" ".join(x) for x in dataset["hypothesis"]]
-    l2 = [" ".join(x) for x in dataset["premise"]]
+    l1 = [" ".join(x) for x in dataset["sentence1"]]
+    l2 = [" ".join(x) for x in dataset["sentence2"]]
     l = l1 + l2
 
     return tokenizer(l)
@@ -20,8 +20,7 @@ def preprocess_function(dataset):
 def losses_mrpc(model, dataset):
     losses = []
     probs = []
-    print(dataset)
-    train_dataset = dataset['test']
+    train_dataset = dataset['train']
     test_dataset = dataset['test']
 
     lm_dataset_train= train_dataset.map(

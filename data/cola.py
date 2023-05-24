@@ -70,7 +70,7 @@ def losses_cola(model, dataset):
             model=model,
             args=training_args,
             train_dataset=lm_dataset_train,
-            eval_dataset=lm_dataset_test,
+            eval_dataset=new_test_dataset,
             data_collator=data_collator,
         )
         eval_results = trainer.evaluate()
