@@ -57,26 +57,26 @@ def get_masked_losses(model, lm_dataset, dataset):
         return losses_ax(model, lm_dataset)
 
 
-datasets = ["ax"]
+datasets = ["cola"]
 # TODO: "ax","mnli","mnli_matched","mnli_mismatched","mrpc","qnli","qqp"
 
 
 for dataset in datasets:
-    # start_time = time.time()
-    # lm_dataset = load_dataset("glue", dataset)
+    start_time = time.time()
+    lm_dataset = load_dataset("glue", dataset)
 
-    # model = BertForMaskedLM.from_pretrained("bert-base-uncased")
-    # losses, probs = get_masked_losses(model, lm_dataset, dataset)
-    # store_file(losses, dataset, "pretrainedBERT")
-    # # plot_masking_losses(losses, probs)
+    model = BertForMaskedLM.from_pretrained("bert-base-uncased")
+    losses, probs = get_masked_losses(model, lm_dataset, dataset)
+    store_file(losses, dataset, "pretrainedBERT")
+    # plot_masking_losses(losses, probs)
 
-    # end_time = time.time() # end tracking time
-    # elapsed_time = end_time - start_time # calculate elapsed time
-    # hours, rem = divmod(elapsed_time, 3600)
-    # minutes, seconds = divmod(rem, 60)
-    # time_str = f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
+    end_time = time.time() # end tracking time
+    elapsed_time = end_time - start_time # calculate elapsed time
+    hours, rem = divmod(elapsed_time, 3600)
+    minutes, seconds = divmod(rem, 60)
+    time_str = f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
 
-    # print(f"Time taken to compute {dataset}, pretrained BERT: {time_str}")
+    print(f"Time taken to compute {dataset}, pretrained BERT: {time_str}")
 
     start_time = time.time()
     lm_dataset = load_dataset("glue", dataset)
