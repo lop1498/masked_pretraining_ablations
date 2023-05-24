@@ -66,7 +66,7 @@ def get_masked_losses(model, lm_dataset, dataset):
         return losses_sst2(model, lm_dataset)
 
 
-datasets = ["sst2"]
+datasets = ["cola"]
 # TODO: "ax","mnli","mnli_matched","mnli_mismatched","mrpc","qnli","qqp"
 
 
